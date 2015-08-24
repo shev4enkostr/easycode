@@ -2,7 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="su.shev4enkostr.easycode" >
 
+    <uses-permission
+        android:name="android.permission.INTERNET">
+    </uses-permission>
+
     <application
+        android:name="su.shev4enkostr.easycode.MySingleton"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -19,3 +24,4 @@
     </application>
 
 </manifest>
+    <!---->

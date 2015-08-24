@@ -1,5 +1,7 @@
 package su.shev4enkostr.easycode;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -19,11 +21,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
 
+    private FragmentTransaction fTransaction;
+    private TeamFragment teamFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        fTransaction = getFragmentManager().beginTransaction();
+        teamFragment = new TeamFragment();
 
         // initialazing toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -69,6 +77,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             menuItem.setChecked(false);
         else
             menuItem.setEnabled(true);
+
+        switch (menuItem.getItemId())
+        {
+            case R.id.drawer_home:
+                break;
+            case R.id.drawer_courses:
+                break;
+            case R.id.drawer_team:
+                if (fTransaction.isEmpty())
+                {
+                    fTransaction.add(R.id.fragment_container, teamFragment);
+                    fTransaction.commit();
+                }
+                else
+                    fTransaction.replace(R.id.fragment_container, teamFragment);
+                break;
+            case R.id.drawer_about:
+                break;
+            default:
+                break;
+        }
+        //fTransaction.commit();
 
         // closing drawer on item click
         drawerLayout.closeDrawers();
