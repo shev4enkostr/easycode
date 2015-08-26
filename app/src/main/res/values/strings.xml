@@ -10,4 +10,16 @@
     <string name="item_courses">Courses</string>
     <string name="item_team">Team</string>
     <string name="item_about_us">About us</string>
+    
+    <!-- Courses names -->
+    <string name="course_java">Course foundations of JAVA</string>
+    <string name="course_layout">Course Layout</string>
+    <string name="course_php">Course PHP/MYSQL/AJAX</string>
+    <string name="course_java_script">Course JavaScript</string>
+    <string name="course_photoshop">Course Photoshop</string>
+    <string name="course_seo">Course Internet Marketing, SEO, Context, CMM</string>
+    <string name="course_wordpress">Advanced course WordPress</string>
+
+    <!-- Toasts -->
+    <string name="toast_exit">Press back again to exit!</string>
 </resources>

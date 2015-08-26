@@ -2,19 +2,14 @@ package su.shev4enkostr.easycode;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.NetworkImageView;
 
 /**
@@ -24,6 +19,7 @@ public class TeamFragment extends Fragment
 {
     private ImageView imageView;
     private NetworkImageView nwImageView;
+    private ImageLoader imageLoader;
     private final static String TAG = "Log_volley";
 
     @Override
@@ -46,55 +42,19 @@ public class TeamFragment extends Fragment
     @Override
     public void onAttach(Context context)
     {
-        /*String url = "http://easycode.com.ua/img/teacher/denis1.jpg";
-
-        ImageRequest request = new ImageRequest(url, new Response.Listener<Bitmap>() {
-            @Override
-            public void onResponse(Bitmap response) {
-                imageView.setImageBitmap(response);
-            }
-        }, 0, 0, null,
-                new Response.ErrorListener()
-                {
-                    @Override
-                    public void onErrorResponse(VolleyError error)
-                    {
-                        imageView.setImageResource(android.R.drawable.stat_notify_error);
-                    }
-                });
-
-        MySingleton.getInstance(getActivity()).addToRequestQueue(request);*/
-
-        /*String url = "http://easycode.com.ua/img/teacher/denis1.jpg";
-        ImageLoader imageLoader = MySingleton.getInstance().getImageLoader();
-
-        // If you are using normal ImageView
-        imageLoader.get(url, new ImageLoader.ImageListener()
-        {
-            @Override
-            public void onErrorResponse(VolleyError error)
-            {
-                Log.e(TAG, "Image Load Error: " + error.getMessage());
-            }
-
-            @Override
-            public void onResponse(ImageLoader.ImageContainer response, boolean arg1)
-            {
-                if (response.getBitmap() != null)
-                {
-                    // load image into imageview
-                    imageView.setImageBitmap(response.getBitmap());
-                }
-            }
-        });*/
-
         super.onAttach(context);
+    }
 
-        String url = "http://easycode.com.ua/img/teacher/denis1.jpg";
+    @Override
+    public void onStart()
+    {
+        super.onStart();
 
-        ImageLoader imageLoader = MySingleton.getInstance().getImageLoader();
+        // Instantiate the RequestQueue.
+        imageLoader = CustomVolleyRequestQueue.getInstance(getActivity().getApplicationContext()).getImageLoader();
+        //Image URL - This can point to any image file supported by Android
+        final String url = "http://easycode.com.ua/img/teacher/denis1.jpg";
+        imageLoader.get(url, ImageLoader.getImageListener(nwImageView,R.mipmap.ic_launcher, android.R.drawable.ic_dialog_alert));
         nwImageView.setImageUrl(url, imageLoader);
-
-
     }
 }

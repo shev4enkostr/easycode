@@ -3,25 +3,79 @@ package su.shev4enkostr.easycode;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.text.TextUtils;
 import android.util.LruCache;
-
-import com.android.volley.Request;
+import com.android.volley.Cache;
+import com.android.volley.Network;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.DiskBasedCache;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.Volley;
 
 /**
  * Created by stas on 23.08.15.
  */
-public class MySingleton extends Application
+public class CustomVolleyRequestQueue //extends Application
 {
-    public static final String TAG = MySingleton.class.getSimpleName();
+    private static CustomVolleyRequestQueue mInstance;
+    private static Context mCtx;
+    private RequestQueue mRequestQueue;
+    private ImageLoader mImageLoader;
+
+
+    private CustomVolleyRequestQueue(Context context) {
+        mCtx = context;
+        mRequestQueue = getRequestQueue();
+
+        mImageLoader = new ImageLoader(mRequestQueue, new ImageLoader.ImageCache()
+        {
+            private final LruCache<String, Bitmap>
+                    cache = new LruCache<String, Bitmap>(20);
+
+                    @Override
+                    public Bitmap getBitmap(String url) {
+                        return cache.get(url);
+                    }
+
+                    @Override
+                    public void putBitmap(String url, Bitmap bitmap) {
+                        cache.put(url, bitmap);
+                    }
+        });
+    }
+
+    public static synchronized CustomVolleyRequestQueue getInstance(Context context)
+    {
+        if (mInstance == null)
+        {
+            mInstance = new CustomVolleyRequestQueue(context);
+        }
+        return mInstance;
+    }
+
+    public RequestQueue getRequestQueue() {
+        if (mRequestQueue == null)
+        {
+            Cache cache = new DiskBasedCache(mCtx.getCacheDir(), 10 * 1024 * 1024);
+            Network network = new BasicNetwork(new HurlStack());
+            mRequestQueue = new RequestQueue(cache, network);
+            // Don't forget to start the volley request queue
+            mRequestQueue.start();
+        }
+        return mRequestQueue;
+    }
+
+    public ImageLoader getImageLoader()
+    {
+        return mImageLoader;
+    }
+}
+    /*public static final String TAG = CustomVolleyRequestQueue.class.getSimpleName();
 
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
 
-    private static MySingleton mInstance;
+    private static CustomVolleyRequestQueue mInstance;
 
     @Override
     public void onCreate()
@@ -30,7 +84,7 @@ public class MySingleton extends Application
         mInstance = this;
     }
 
-    public static synchronized MySingleton getInstance()
+    public static synchronized CustomVolleyRequestQueue getInstance()
     {
         return mInstance;
     }
@@ -74,15 +128,15 @@ public class MySingleton extends Application
             mRequestQueue.cancelAll(tag);
         }
     }
-}
+}*/
 
 
-    /*private static MySingleton instance;
+    /*private static CustomVolleyRequestQueue instance;
     private RequestQueue requestQueue;
     private ImageLoader imageLoader;
     private static Context cnxt;
 
-    private MySingleton(Context context)
+    private CustomVolleyRequestQueue(Context context)
     {
         cnxt = context;
         requestQueue = getRequestQueue();
@@ -113,10 +167,10 @@ public class MySingleton extends Application
         return requestQueue;
     }
 
-    public static synchronized MySingleton getInstance(Context context)
+    public static synchronized CustomVolleyRequestQueue getInstance(Context context)
     {
         if (instance == null)
-            instance = new MySingleton(context);
+            instance = new CustomVolleyRequestQueue(context);
 
         return instance;
     }
