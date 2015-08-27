@@ -20,6 +20,32 @@
     <string name="course_seo">Course Internet Marketing, SEO, Context, CMM</string>
     <string name="course_wordpress">Advanced course WordPress</string>
 
+    <!-- Team -->
+    <string name="team_name_denis_layout">Denis Mesheryakov</string>
+    <string name="team_about_denis_layout">Curator of course:\nHTML and CSS layout</string>
+
+    <string name="team_name_evgenij_php">Evgenij Degtyaryov</string>
+    <string name="team_about_evgenij_php">Curator of course:\nPHP/MYSQL/AJAX</string>
+
+    <string name="team_name_artem_wordpress">Artem Kondranin</string>
+    <string name="team_about_artem_wordpress">Curator of course:\nAdvanced WordPress</string>
+
+    <string name="team_name_sveta_marketing">Svetlana Mesheryakova</string>
+    <string name="team_about_sveta_marketing">Curator of course:\nReal Marketing</string>
+
+    <string name="team_name_julia_kopiraiter">Julia Chernaya</string>
+    <string name="team_about_julia_kopiraiter">Curator of course:\nDifficult Copywriting</string>
+
+    <string name="team_name_mihail_social_networks">Mihail Chebanenko</string>
+    <string name="team_about_mihail_social_networks">Curator of:\nour groups social networks</string>
+
+    <string name="team_name_andrey_photoshop">Andrey Dushenko</string>
+    <string name="team_about_andrey_photoshop">Curator of course:\nPhothoShop</string>
+
+    <string name="team_name_julia_english">Julia Chekmenyova</string>
+    <string name="team_about_julia_english">Curator of course:\nEnglish language</string>
+
     <!-- Toasts -->
     <string name="toast_exit">Press back again to exit!</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

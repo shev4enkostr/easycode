@@ -1,25 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="hfhgfhgf"/>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp">
 
-    <com.android.volley.toolbox.NetworkImageView
-        android:id="@+id/team_image"
-        android:layout_width="match_parent"
+    <android.support.v7.widget.RecyclerView
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        />
+        android:layout_width="match_parent"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        android:scrollbarStyle="outsideOverlay"
+        android:divider="@null"
+        android:id="@+id/rv_team">
+    </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>
-
-<!--<ImageView
-android:id="@+id/team_image"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:layout_gravity="center"
-android:contentDescription="image"/>-->

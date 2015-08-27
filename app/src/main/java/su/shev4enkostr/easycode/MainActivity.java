@@ -1,19 +1,15 @@
 package su.shev4enkostr.easycode;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.res.ColorStateList;
 import android.os.PersistableBundle;
 import android.support.design.widget.NavigationView;
+import android.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -31,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private HomeFragment homeFragment;
     private CoursesFragment coursesFragment;
     private TeamFragment teamFragment;
+    private AboutFragment aboutFragment;
 
     private final static String ARG_CHECKED_DRAWER_ITEM = "checked_drawer_item";
     private static int checkedDrawerItem;
@@ -45,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         homeFragment = new HomeFragment();
         coursesFragment = new CoursesFragment();
         teamFragment = new TeamFragment();
+        aboutFragment = new AboutFragment();
 
         initializeToolBar();
         initializeNavigationView();
@@ -96,14 +94,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.drawer_team:
                 fragment = teamFragment;
                 title = getString(R.string.item_team);
+                break;
 
             case R.id.drawer_about:
+                fragment = aboutFragment;
+                //FragmentTransaction ft = getFragmentManager().beginTransaction();
+                //ft.replace(R.id.fragment_container, aboutFragment);
+                title = getString(R.string.item_about_us);
                 break;
 
             default:
                 break;
         }
-        addFragment();
+        if (fragment != null)
+            addFragment();
         /*if (fragment != null)
         {
             //fTransaction.replace(R.id.fragment_container, fragment);
