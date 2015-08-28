@@ -7,12 +7,60 @@
     android:layout_height="match_parent"
     android:gravity="center">
 
-    <FrameLayout
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-    </FrameLayout>
+        <ImageButton
+            android:id="@+id/btn_vk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:src="@drawable/vkontakte"/>
+
+        <ImageButton
+            android:id="@+id/btn_google"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:src="@drawable/google"/>
+
+        <ImageButton
+            android:id="@+id/btn_facebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:src="@drawable/facebook"/>
+
+        <ImageButton
+            android:id="@+id/btn_twitter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:src="@drawable/twitter_bird"/>
+
+        <ImageButton
+            android:id="@+id/btn_skype"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_margin="4dp"
+            android:src="@drawable/skype"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/map"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp">
+        <!--android:name="com.google.android.gms.maps.SupportMapFragment"-->
+    </LinearLayout>
 
 </LinearLayout>

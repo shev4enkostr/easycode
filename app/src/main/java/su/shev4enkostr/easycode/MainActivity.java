@@ -1,9 +1,10 @@
 package su.shev4enkostr.easycode;
 
-import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.PersistableBundle;
 import android.support.design.widget.NavigationView;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +17,6 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
 {
-
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
@@ -52,10 +52,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         else
             selectHomeItem();
-
-        /*FragmentTransaction fTransaction = getFragmentManager().beginTransaction();
-        fTransaction.add(R.id.fragment_container, homeFragment);
-        fTransaction.commit();*/
     }
 
     @Override
@@ -74,16 +70,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else
             menuItem.setEnabled(false);
 
-        //Fragment fragment = null;
-        //String title = getString(R.string.app_name);
-
-        switch (menuItem.getItemId())
+       switch (menuItem.getItemId())
         {
             case R.id.drawer_home:
                 fragment = homeFragment;
                 title = getString(R.string.app_name);
-                //navigationView.setCheckedItem(R.id.drawer_home);
-                //navigationView.setItemTextColor(ColorStateList.valueOf(getColor(R.color.navigation_view_item_color)));
                 break;
 
             case R.id.drawer_courses:
@@ -98,27 +89,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.drawer_about:
                 fragment = aboutFragment;
-                //FragmentTransaction ft = getFragmentManager().beginTransaction();
-                //ft.replace(R.id.fragment_container, aboutFragment);
                 title = getString(R.string.item_about_us);
+                //Intent intent = new Intent(this, MapsActivity.class);
+                //startActivity(intent);
                 break;
 
             default:
                 break;
         }
-        if (fragment != null)
-            addFragment();
-        /*if (fragment != null)
-        {
-            //fTransaction.replace(R.id.fragment_container, fragment);
-            FragmentTransaction fTransaction = getFragmentManager().beginTransaction();
-            fTransaction.replace(R.id.fragment_container, fragment);
-            fTransaction.commit();
-            getSupportActionBar().setTitle(title);
-        }*/
-
         // closing drawer on item click
         drawerLayout.closeDrawers();
+
+        if (fragment != null)
+            addFragment();
 
         return true;
     }
@@ -172,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // initializing Drawer Layout and ActionBarToggle
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-        ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close)
+        final ActionBarDrawerToggle actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close)
         {
             @Override
             public void onDrawerClosed(View drawerView)
@@ -208,11 +191,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     {
         if (fragment != null)
         {
-            //fTransaction.replace(R.id.fragment_container, fragment);
-            FragmentTransaction fTransaction = getFragmentManager().beginTransaction();
+            FragmentTransaction fTransaction = getSupportFragmentManager().beginTransaction();
             fTransaction.replace(R.id.fragment_container, fragment);
             fTransaction.commit();
             getSupportActionBar().setTitle(title);
+            //toolbar.setVisibility(Toolbar.VISIBLE);
         }
     }
 
