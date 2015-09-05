@@ -1,7 +1,10 @@
 package su.shev4enkostr.easycode;
 
-import android.content.Intent;
+import android.os.Handler;
 import android.os.PersistableBundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -29,6 +32,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TeamFragment teamFragment;
     private AboutFragment aboutFragment;
 
+    private Handler handler;
+    private Runnable runnable;
+
     private final static String ARG_CHECKED_DRAWER_ITEM = "checked_drawer_item";
     private static int checkedDrawerItem;
 
@@ -43,12 +49,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         coursesFragment = new CoursesFragment();
         teamFragment = new TeamFragment();
         aboutFragment = new AboutFragment();
+        handler = new Handler();
 
+        //disableCollapsingToolBar();
         initializeToolBar();
         initializeNavigationView();
 
-        if (savedInstanceState != null)
-            navigationView.setCheckedItem(savedInstanceState.getInt(ARG_CHECKED_DRAWER_ITEM));
+        if (savedInstanceState != null && savedInstanceState.containsKey(ARG_CHECKED_DRAWER_ITEM))
+        {
+            int checkedItem = (savedInstanceState.getInt(ARG_CHECKED_DRAWER_ITEM));
+            prepareFragment(checkedItem);
+            addFragment();
+        }
 
         else
             selectHomeItem();
@@ -58,19 +70,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState)
     {
         super.onSaveInstanceState(outState, outPersistentState);
-        outState.putInt(ARG_CHECKED_DRAWER_ITEM, navigationView.getId());
+        outState.putInt(ARG_CHECKED_DRAWER_ITEM, checkedDrawerItem);
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem)
     {
+        // get checked item id for save in onSaveInstanceState()
+        checkedDrawerItem = menuItem.getItemId();
+
         //Checking if the item is in checked state or not, if not make it in checked state
         if (menuItem.isChecked())
             menuItem.setChecked(true);
         else
             menuItem.setEnabled(false);
 
-       switch (menuItem.getItemId())
+        prepareFragment(menuItem.getItemId());
+
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                addFragment();
+            }
+        };
+        resetToolbarScrollState();
+        // closing drawer on item click
+        drawerLayout.closeDrawers();
+
+        return true;
+    }
+
+    private void prepareFragment(int checkedItemId)
+    {
+        switch (checkedItemId)
         {
             case R.id.drawer_home:
                 fragment = homeFragment;
@@ -90,20 +122,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.drawer_about:
                 fragment = aboutFragment;
                 title = getString(R.string.item_about_us);
-                //Intent intent = new Intent(this, MapsActivity.class);
-                //startActivity(intent);
                 break;
 
             default:
                 break;
         }
-        // closing drawer on item click
-        drawerLayout.closeDrawers();
-
-        if (fragment != null)
-            addFragment();
-
-        return true;
     }
 
     @Override
@@ -135,13 +158,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             return true;
         }
-
         return super.onKeyDown(keyCode, event);
     }
 
     private void initializeToolBar()
     {
-        // initialazing toolbar
+        // initializing toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -162,6 +184,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             {
                 // Code here will be triggered once the drawer closes as we dont want anything to happen so we leave this blank
                 super.onDrawerClosed(drawerView);
+
+                getSupportActionBar().setTitle(title);
+
+                if (runnable != null) {
+                    handler.post(runnable);
+                    runnable = null;
+                }
+                //addFragment();
             }
 
             @Override
@@ -179,6 +209,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         actionBarDrawerToggle.syncState();
     }
 
+    /*private void disableCollapsingToolBar()
+    {
+        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
+        collapsingToolbarLayout.setVisibility(View.GONE);
+    }*/
+
     private void selectHomeItem()
     {
         fragment = homeFragment;
@@ -194,9 +230,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             FragmentTransaction fTransaction = getSupportFragmentManager().beginTransaction();
             fTransaction.replace(R.id.fragment_container, fragment);
             fTransaction.commit();
-            getSupportActionBar().setTitle(title);
-            //toolbar.setVisibility(Toolbar.VISIBLE);
+            //getSupportActionBar().setTitle(title);
+            fragment = null;
         }
+    }
+
+    private void resetToolbarScrollState()
+    {
+        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
+        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
+        AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) layoutParams.getBehavior();
+        behavior.onNestedFling(coordinatorLayout, appBarLayout, null, 0, -1000, true);
     }
 
     /*@Override

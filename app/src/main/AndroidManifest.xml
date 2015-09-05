@@ -36,11 +36,13 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" >
+            android:name=".CourseAboutActivity"
+            android:label="@string/title_activity_course_about"
+            android:theme="@style/AppThemeNoAnimation"
+            android:parentActivityName=".MainActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity"/>
         </activity>
     </application>
 
-</manifest>
-
-    <!-- android:name=".CustomVolleyRequestQueue" -->
+</manifest> <!-- android:name=".CustomVolleyRequestQueue" -->
