@@ -7,25 +7,35 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 
 public class CourseAboutActivity extends AppCompatActivity {
 
     private WebView webView;
     private String url = null;
+    private String title = null;
+    private int pictureId = 0;
 
     public final static String ARG_URL = "url";
+    public final static String ARG_TITLE = "title";
+    public final static String ARG_PICTURE_ID = "picture_id";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course_about);
 
+        url = getIntent().getStringExtra(ARG_URL);
+        title = getIntent().getStringExtra(ARG_TITLE);
+        pictureId = getIntent().getIntExtra(ARG_PICTURE_ID, 0);
+
         initializeToolBar();
 
         webView = (WebView) findViewById(R.id.web_view);
-
-        url = getIntent().getStringExtra(ARG_URL);
 
         if (url != null)
         {
@@ -43,14 +53,26 @@ public class CourseAboutActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle("Collapsing ToolBar Layout");
+        collapsingToolbar.setTitle(title);
 
-
+        loadToolbarImage();
     }
 
-    @Override
+    private void loadToolbarImage()
+    {
+        ImageView imageView = (ImageView) findViewById(R.id.backdrop);
+        Glide.with(this).load(pictureId).centerCrop().into(imageView);
+    }
+
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_course_about, menu);
@@ -73,5 +95,5 @@ public class CourseAboutActivity extends AppCompatActivity {
             onBackPressed();
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 }

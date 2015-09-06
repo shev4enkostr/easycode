@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
+    private CoordinatorLayout coordinatorLayout;
     private Toast backPressed;
 
     private String title;
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         handler = new Handler();
 
         //disableCollapsingToolBar();
+        initializeCoordinatorLayout();
         initializeToolBar();
         initializeNavigationView();
 
@@ -71,6 +74,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     {
         super.onSaveInstanceState(outState, outPersistentState);
         outState.putInt(ARG_CHECKED_DRAWER_ITEM, checkedDrawerItem);
+    }
+
+    private void initializeCoordinatorLayout()
+    {
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+        coordinatorLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        try {
+            return super.onTouchEvent(event);
+        }
+        catch (Exception e){
+            return false;
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        try {
+            return super.dispatchTouchEvent(ev);
+        }
+        catch (Exception e){
+            return false;
+        }
     }
 
     @Override

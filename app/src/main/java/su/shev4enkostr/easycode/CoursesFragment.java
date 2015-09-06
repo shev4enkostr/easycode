@@ -28,6 +28,14 @@ public class CoursesFragment extends Fragment{
     private RecyclerView recyclerView;
     private List<Courses> courses;
 
+    private final static String URL_JAVA = "http://easycode.com.ua/java.html";
+    private final static String URL_LAYOUT = "http://easycode.com.ua/css.html";
+    private final static String URL_PHP = "http://easycode.com.ua/php.html";
+    private final static String URL_JAVA_SCRIPT = "http://easycode.com.ua/#";
+    private final static String URL_PHOTOSHOP = "http://easycode.com.ua/#";
+    private final static String URL_SEO = "http://easycode.com.ua/#";
+    private final static String URL_WORDPRESS = "http://easycode.com.ua/#";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         initializeData();
@@ -51,13 +59,13 @@ public class CoursesFragment extends Fragment{
 
     private void initializeData() {
         courses = new ArrayList<>();
-        courses.add(new Courses(getString(R.string.course_java), "", R.drawable.course_java));
-        courses.add(new Courses(getString(R.string.course_layout), "", R.drawable.course_layout));
-        courses.add(new Courses(getString(R.string.course_php), "", R.drawable.course_php));
-        courses.add(new Courses(getString(R.string.course_java_script), "", R.drawable.course_javascript));
-        courses.add(new Courses(getString(R.string.course_photoshop), "", R.drawable.course_photoshop));
-        courses.add(new Courses(getString(R.string.course_seo), "", R.drawable.course_seo));
-        courses.add(new Courses(getString(R.string.course_wordpress), "", R.drawable.course_wordpress));
+        courses.add(new Courses(getString(R.string.course_java), R.drawable.course_java, URL_JAVA));
+        courses.add(new Courses(getString(R.string.course_layout), R.drawable.course_layout, URL_LAYOUT));
+        courses.add(new Courses(getString(R.string.course_php), R.drawable.course_php, URL_PHP));
+        courses.add(new Courses(getString(R.string.course_java_script), R.drawable.course_javascript, URL_JAVA_SCRIPT));
+        courses.add(new Courses(getString(R.string.course_photoshop), R.drawable.course_photoshop, URL_PHOTOSHOP));
+        courses.add(new Courses(getString(R.string.course_seo), R.drawable.course_seo, URL_SEO));
+        courses.add(new Courses(getString(R.string.course_wordpress), R.drawable.course_wordpress, URL_WORDPRESS));
     }
 
     public static class RVCoursesAdapter extends RecyclerView.Adapter<RVCoursesAdapter.CoursesViewHolder> {
@@ -67,7 +75,6 @@ public class CoursesFragment extends Fragment{
 
             CardView cvCourses;
             TextView coursesName;
-            TextView coursesAbout;
             ImageView coursesPicture;
 
             CoursesViewHolder(View itemView) {
@@ -75,15 +82,14 @@ public class CoursesFragment extends Fragment{
                 this.itemView = itemView;
                 cvCourses = (CardView) itemView.findViewById(R.id.cv_courses);
                 coursesName = (TextView) itemView.findViewById(R.id.courses_name);
-                //coursesAbout = (TextView)itemView.findViewById(R.id.courses_about);
                 coursesPicture = (ImageView) itemView.findViewById(R.id.courses_picture);
             }
         }
 
-        List<Courses> persons;
+        List<Courses> courses;
 
-        RVCoursesAdapter(List<Courses> persons) {
-            this.persons = persons;
+        RVCoursesAdapter(List<Courses> courses) {
+            this.courses = courses;
         }
 
         @Override
@@ -99,18 +105,19 @@ public class CoursesFragment extends Fragment{
         }
 
         @Override
-        public void onBindViewHolder(CoursesViewHolder personViewHolder, int i) {
-            personViewHolder.coursesName.setText(persons.get(i).getName());
-            //personViewHolder.coursesAbout.setText(persons.get(i).getAbout());
-            personViewHolder.coursesPicture.setImageResource(persons.get(i).getPictureId());
+        public void onBindViewHolder(final CoursesViewHolder personViewHolder, final int i) {
+            personViewHolder.coursesName.setText(courses.get(i).getName());
+            personViewHolder.coursesPicture.setImageResource(courses.get(i).getPictureId());
 
             personViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // start CorseAboutActivity
+                    // starting CourseAboutActivity
                     Context context = view.getContext();
                     Intent intent = new Intent(context, CourseAboutActivity.class);
-                    intent.putExtra(CourseAboutActivity.ARG_URL, "http://easycode.com.ua/java.html");
+                    intent.putExtra(CourseAboutActivity.ARG_URL, courses.get(i).getUrl());
+                    intent.putExtra(CourseAboutActivity.ARG_TITLE, courses.get(i).getName());
+                    intent.putExtra(CourseAboutActivity.ARG_PICTURE_ID, courses.get(i).getPictureId());
                     context.startActivity(intent);
                 }
             });
@@ -118,31 +125,31 @@ public class CoursesFragment extends Fragment{
 
         @Override
         public int getItemCount() {
-            return persons.size();
+            return courses.size();
         }
     }
 
     class Courses {
         private String name;
-        private String about;
         private int pictureId;
+        private String url;
 
-        public Courses(String name, String about, int pictureId) {
+        public Courses(String name, int pictureId, String url) {
             this.name = name;
-            this.about = about;
             this.pictureId = pictureId;
+            this.url = url;
         }
 
         public String getName() {
             return name;
         }
 
-        public String getAbout() {
-            return about;
-        }
-
         public int getPictureId() {
             return pictureId;
+        }
+
+        public String getUrl() {
+            return url;
         }
     }
 }

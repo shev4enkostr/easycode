@@ -49,4 +49,7 @@
     <string name="toast_exit">Press back again to exit!</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_course_about">CourseAboutActivity</string>
+
+    <!-- URL's -->
+
 </resources>
