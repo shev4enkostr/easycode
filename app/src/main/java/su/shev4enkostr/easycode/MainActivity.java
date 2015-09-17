@@ -1,30 +1,28 @@
 package su.shev4enkostr.easycode;
 
+import android.content.pm.PackageManager;
 import android.os.Handler;
-import android.os.PersistableBundle;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
+public class MainActivity extends CustomAppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
 {
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
-    private CoordinatorLayout coordinatorLayout;
     private Toast backPressed;
 
     private String title;
@@ -38,7 +36,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Runnable runnable;
 
     private final static String ARG_CHECKED_DRAWER_ITEM = "checked_drawer_item";
-    private static int checkedDrawerItem;
+    private int checkedDrawerItemId;
+
+    private static final String APP_VK = "com.vkontakte.android";
+    private static final String APP_FB = "com.facebook.katana";
+    private static final String APP_GPLUS = "com.google.android.apps.plus";
+    private static final String APP_INST = "com.instagram.android";
+
+    private static final String TAG = "EasyCode MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -53,65 +58,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         aboutFragment = new AboutFragment();
         handler = new Handler();
 
-        //disableCollapsingToolBar();
         initializeCoordinatorLayout();
         initializeToolBar();
         initializeNavigationView();
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(ARG_CHECKED_DRAWER_ITEM))
-        {
-            int checkedItem = (savedInstanceState.getInt(ARG_CHECKED_DRAWER_ITEM));
-            prepareFragment(checkedItem);
+        if (savedInstanceState == null || ! savedInstanceState.containsKey(ARG_CHECKED_DRAWER_ITEM))
+            selectHomeItem();
+
+        else {
+            checkedDrawerItemId = (savedInstanceState.getInt(ARG_CHECKED_DRAWER_ITEM));
+            prepareFragment(checkedDrawerItemId);
+            resetToolbarScrollState();
             addFragment();
         }
-
-        else
-            selectHomeItem();
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState)
-    {
-        super.onSaveInstanceState(outState, outPersistentState);
-        outState.putInt(ARG_CHECKED_DRAWER_ITEM, checkedDrawerItem);
-    }
-
-    private void initializeCoordinatorLayout()
-    {
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
-        coordinatorLayout.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return true;
-            }
-        });
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        try {
-            return super.onTouchEvent(event);
-        }
-        catch (Exception e){
-            return false;
-        }
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        try {
-            return super.dispatchTouchEvent(ev);
-        }
-        catch (Exception e){
-            return false;
-        }
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(ARG_CHECKED_DRAWER_ITEM, checkedDrawerItemId);
+        Log.d(TAG, "onSaveInstanceState()__________________");
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem)
     {
         // get checked item id for save in onSaveInstanceState()
-        checkedDrawerItem = menuItem.getItemId();
+        checkedDrawerItemId = menuItem.getItemId();
 
         //Checking if the item is in checked state or not, if not make it in checked state
         if (menuItem.isChecked())
@@ -161,6 +134,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             default:
                 break;
         }
+        Log.d(TAG, "prepareFragment()__________________");
+        Log.d(TAG, fragment.toString());
     }
 
     @Override
@@ -243,17 +218,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         actionBarDrawerToggle.syncState();
     }
 
-    /*private void disableCollapsingToolBar()
-    {
-        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar_layout);
-        collapsingToolbarLayout.setVisibility(View.GONE);
-    }*/
-
     private void selectHomeItem()
     {
         fragment = homeFragment;
         title = getString(R.string.app_name);
-        navigationView.setCheckedItem(R.id.drawer_home);
+        navigationView.setCheckedItem(checkedDrawerItemId = R.id.drawer_home);
         addFragment();
     }
 
@@ -267,6 +236,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //getSupportActionBar().setTitle(title);
             fragment = null;
         }
+        else
+            Log.d(TAG, "addFragment() fragment = null !!!___________");
     }
 
     private void resetToolbarScrollState()
@@ -278,10 +249,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         behavior.onNestedFling(coordinatorLayout, appBarLayout, null, 0, -1000, true);
     }
 
-    /*@Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -289,16 +259,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        switch (id)
+        {
+            case R.id.action_social_vk:
+                isAppInstalled(APP_VK);
+                break;
+
+            case R.id.action_social_fb:
+                isAppInstalled(APP_FB);
+                break;
+
+            case R.id.action_social_gplus:
+                isAppInstalled(APP_GPLUS);
+                break;
+
+            case R.id.action_social_inst:
+                isAppInstalled(APP_INST);
+                break;
+
+            default:
+                break;
+        }
+        /*//noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        }
-
+        }*/
         return super.onOptionsItemSelected(item);
-    }*/
+    }
+
+    private boolean isAppInstalled(String app)
+    {
+        PackageManager pm = getPackageManager();
+        try {
+            pm.getPackageInfo(app, PackageManager.GET_ACTIVITIES);
+            Toast.makeText(this, "Installed", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        catch (PackageManager.NameNotFoundException e) {
+            Toast.makeText(this, "NOT Installed!!!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
 }

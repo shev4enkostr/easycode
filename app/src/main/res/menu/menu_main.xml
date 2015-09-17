@@ -2,8 +2,42 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context=".MainActivity">
-    <item android:id="@+id/action_settings"
+
+    <!--<item android:id="@+id/action_settings"
           android:title="@string/action_settings"
           android:orderInCategory="100"
-          app:showAsAction="never"/>
+          app:showAsAction="never"/>-->
+
+    <item android:id="@+id/action_social"
+          android:title="@string/action_social"
+          android:orderInCategory="100"
+          android:icon="@drawable/ic_people_white_48dp"
+          app:showAsAction="always">
+          <menu>
+                <item
+                      android:id="@+id/action_social_vk"
+                      android:title="@string/action_social_vk"
+                      android:orderInCategory="100"
+                      android:icon="@drawable/vkontakte"
+                      app:showAsAction="always"/>
+                <item
+                      android:id="@+id/action_social_fb"
+                      android:title="@string/action_social_fb"
+                      android:orderInCategory="100"
+                      android:icon="@drawable/facebook"
+                      app:showAsAction="always"/>
+                <item
+                      android:id="@+id/action_social_gplus"
+                      android:title="@string/action_social_gplus"
+                      android:orderInCategory="100"
+                      android:icon="@drawable/google"
+                      app:showAsAction="always"/>
+                <item
+                      android:id="@+id/action_social_inst"
+                      android:title="@string/action_social_inst"
+                      android:orderInCategory="100"
+                      android:icon="@drawable/twitter_bird"
+                      app:showAsAction="always"/>
+          </menu>
+    </item>
 </menu>

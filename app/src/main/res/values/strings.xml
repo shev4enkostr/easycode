@@ -1,7 +1,7 @@
 <resources>
+
     <string name="app_name">Easy Code</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
@@ -10,7 +10,14 @@
     <string name="item_courses">Courses</string>
     <string name="item_team">Team</string>
     <string name="item_about_us">About us</string>
-    
+
+    <!-- ActionBar items -->
+    <string name="action_social">Social Groups</string>
+    <string name="action_social_vk">Vkontakte</string>
+    <string name="action_social_fb">Facebook</string>
+    <string name="action_social_gplus">Google Plus</string>
+    <string name="action_social_inst">Instagram</string>
+
     <!-- Courses names -->
     <string name="course_java">Course foundations of JAVA</string>
     <string name="course_layout">Course Layout</string>

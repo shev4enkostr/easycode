@@ -68,7 +68,7 @@ public class AboutFragment extends Fragment //implements LoaderManager.LoaderCal
         Log.d(TAG, "super.onResume()");
         super.onResume();
 
-        handler.post(new Runnable() {
+        /*handler.post(new Runnable() {
             @Override
             public void run() {
                 Log.d(TAG, "run()   START");
@@ -76,7 +76,26 @@ public class AboutFragment extends Fragment //implements LoaderManager.LoaderCal
                 initializeMap();
                 Log.d(TAG, "run()   END");
             }
+        });*/
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Thread run()   START");
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "Handler run()   START");
+                        initializeMapFragment();
+                        initializeMap();
+                        Log.d(TAG, "Handler run()   END");
+                    }
+                });
+
+                Log.d(TAG, "Thread run()   END");
+            }
         });
+        thread.start();
     }
 
     @Override

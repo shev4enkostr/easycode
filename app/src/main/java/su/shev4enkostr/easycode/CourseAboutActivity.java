@@ -13,7 +13,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 
-public class CourseAboutActivity extends AppCompatActivity {
+public class CourseAboutActivity extends CustomAppCompatActivity {
 
     private WebView webView;
     private String url = null;
@@ -33,6 +33,7 @@ public class CourseAboutActivity extends AppCompatActivity {
         title = getIntent().getStringExtra(ARG_TITLE);
         pictureId = getIntent().getIntExtra(ARG_PICTURE_ID, 0);
 
+        initializeCoordinatorLayout();
         initializeToolBar();
 
         webView = (WebView) findViewById(R.id.web_view);
