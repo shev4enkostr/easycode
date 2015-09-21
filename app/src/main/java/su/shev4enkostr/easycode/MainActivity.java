@@ -1,6 +1,8 @@
 package su.shev4enkostr.easycode;
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -20,6 +22,7 @@ import android.widget.Toast;
 
 public class MainActivity extends CustomAppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
 {
+    private AppBarLayout appBarLayout;
     private Toolbar toolbar;
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
@@ -37,13 +40,20 @@ public class MainActivity extends CustomAppCompatActivity implements NavigationV
 
     private final static String ARG_CHECKED_DRAWER_ITEM = "checked_drawer_item";
     private int checkedDrawerItemId;
-
-    private static final String APP_VK = "com.vkontakte.android";
-    private static final String APP_FB = "com.facebook.katana";
-    private static final String APP_GPLUS = "com.google.android.apps.plus";
-    private static final String APP_INST = "com.instagram.android";
+    private static final String ARG_TOOLBAR_TITLE = "toolbar_title";
 
     private static final String TAG = "EasyCode MainActivity";
+
+    // Social networks constants
+    private static final String VK_APP = "com.vkontakte.android";
+    private static final String FB_APP = "com.facebook.katana";
+    private static final String GPLUS_APP = "com.google.android.apps.plus";
+    private static final String VK_COMMUNITY_ID = "-94218931";
+    private static final String VK_COMMUNITY_URL = "http://vk.com/easy_code_kharkov";
+    private static final String FB_COMMUNITY_ID = "830245307056749";
+    private static final String FB_COMMUNITY_URL = "https://m.facebook.com/easycodekharkov";
+    private static final String GPLUS_COMMUNITY_ID = "114035626550085554848";
+    private static final String GPLUS_COMMUNITY_URL = "https://plus.google.com/+EasyCodeKharkov";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -58,25 +68,78 @@ public class MainActivity extends CustomAppCompatActivity implements NavigationV
         aboutFragment = new AboutFragment();
         handler = new Handler();
 
-        initializeCoordinatorLayout();
         initializeToolBar();
         initializeNavigationView();
+        initializeCoordinatorLayout();
+
+        //appBarLayout.setExpanded(true);
 
         if (savedInstanceState == null || ! savedInstanceState.containsKey(ARG_CHECKED_DRAWER_ITEM))
             selectHomeItem();
 
         else {
-            checkedDrawerItemId = (savedInstanceState.getInt(ARG_CHECKED_DRAWER_ITEM));
-            prepareFragment(checkedDrawerItemId);
-            resetToolbarScrollState();
+            //checkedDrawerItemId = (savedInstanceState.getInt(ARG_CHECKED_DRAWER_ITEM));
+            //prepareFragment(checkedDrawerItemId);
+
+            title = savedInstanceState.getString(ARG_TOOLBAR_TITLE);
             addFragment();
         }
+
+        Log.d(TAG, "onCreate__________________________");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //getSupportActionBar().setTitle(title);
+        Log.d(TAG, "onStart()______________________");
+        appBarLayout.setExpanded(true);
+        getSupportActionBar().setTitle(title);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume()______________________");
+        Log.d(TAG, "appBarLayout..getTargetElevation()__________" + appBarLayout.getTargetElevation());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause()______________________");
+        Log.d(TAG, "appBarLayout..getTargetElevation()__________" + appBarLayout.getTargetElevation());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop()______________________");
+
+        appBarLayout.setExpanded(true);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy()______________________");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart()______________________");
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(ARG_CHECKED_DRAWER_ITEM, checkedDrawerItemId);
+        outState.putString(ARG_TOOLBAR_TITLE, title);
+
+        /*AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
+        appBarLayout.setExpanded(true);*/
+
         Log.d(TAG, "onSaveInstanceState()__________________");
     }
 
@@ -134,6 +197,7 @@ public class MainActivity extends CustomAppCompatActivity implements NavigationV
             default:
                 break;
         }
+        //getSupportActionBar().setTitle(title);
         Log.d(TAG, "prepareFragment()__________________");
         Log.d(TAG, fragment.toString());
     }
@@ -172,6 +236,9 @@ public class MainActivity extends CustomAppCompatActivity implements NavigationV
 
     private void initializeToolBar()
     {
+        // initializing appBarLayout
+        appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
+        //appBarLayout.setExpanded(true);
         // initializing toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -193,14 +260,12 @@ public class MainActivity extends CustomAppCompatActivity implements NavigationV
             {
                 // Code here will be triggered once the drawer closes as we dont want anything to happen so we leave this blank
                 super.onDrawerClosed(drawerView);
-
-                getSupportActionBar().setTitle(title);
-
-                if (runnable != null) {
+                //getSupportActionBar().setTitle(title);
+                /*if (runnable != null) {
                     handler.post(runnable);
                     runnable = null;
-                }
-                //addFragment();
+                }*/
+                addFragment();
             }
 
             @Override
@@ -260,27 +325,36 @@ public class MainActivity extends CustomAppCompatActivity implements NavigationV
     public boolean onOptionsItemSelected(MenuItem item)
     {
         int id = item.getItemId();
-
+        Intent intent = null;
         switch (id)
         {
             case R.id.action_social_vk:
-                isAppInstalled(APP_VK);
+                if (isAppInstalled(VK_APP))
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("vkontakte://profile/" + VK_COMMUNITY_ID));
+                else
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse(VK_COMMUNITY_URL));
                 break;
 
             case R.id.action_social_fb:
-                isAppInstalled(APP_FB);
+                if (isAppInstalled(FB_APP))
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/" + FB_COMMUNITY_ID));
+                else
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse(FB_COMMUNITY_URL));
                 break;
 
             case R.id.action_social_gplus:
-                isAppInstalled(APP_GPLUS);
-                break;
-
-            case R.id.action_social_inst:
-                isAppInstalled(APP_INST);
+                if (isAppInstalled(GPLUS_APP))
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://plus.google.com/" + GPLUS_COMMUNITY_ID + "/posts")).setPackage(GPLUS_APP);
+                else
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse(GPLUS_COMMUNITY_URL));
                 break;
 
             default:
                 break;
+        }
+        if (intent != null) {
+            startActivity(intent);
+            intent = null;
         }
         /*//noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
@@ -294,11 +368,11 @@ public class MainActivity extends CustomAppCompatActivity implements NavigationV
         PackageManager pm = getPackageManager();
         try {
             pm.getPackageInfo(app, PackageManager.GET_ACTIVITIES);
-            Toast.makeText(this, "Installed", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Installed", Toast.LENGTH_SHORT).show();
             return true;
         }
         catch (PackageManager.NameNotFoundException e) {
-            Toast.makeText(this, "NOT Installed!!!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "NOT Installed!!!", Toast.LENGTH_SHORT).show();
             return false;
         }
     }

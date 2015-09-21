@@ -32,12 +32,6 @@
                       android:orderInCategory="100"
                       android:icon="@drawable/google"
                       app:showAsAction="always"/>
-                <item
-                      android:id="@+id/action_social_inst"
-                      android:title="@string/action_social_inst"
-                      android:orderInCategory="100"
-                      android:icon="@drawable/twitter_bird"
-                      app:showAsAction="always"/>
           </menu>
     </item>
 </menu>
