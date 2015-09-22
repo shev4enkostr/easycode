@@ -44,8 +44,8 @@ public class AboutFragment extends Fragment implements
         OnMapReadyCallback
 {
     private GoogleApiClient googleApiClient;
-    private boolean locationEnable = false;
-    private static final int REQUEST_CHECK_SETTINGS = 1;
+    protected static boolean locationEnable = false;
+    protected static final int REQUEST_CHECK_SETTINGS = 1;
 
     private SupportMapFragment supportMapFragment;
     private GoogleMap googleMap;
@@ -78,16 +78,7 @@ public class AboutFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         Log.d(TAG, "onCreateView()");
-        //return inflater.inflate(R.layout.fragment_about, container, false);
-
-        View view = inflater.inflate(R.layout.fragment_about, container, false);
-        //pb = (ProgressBar) view.findViewById(R.id.pb);
-        //ll = (LinearLayout) view.findViewById(R.id.ll);
-        //pb.setVisibility(View.GONE);
-        //pb.setIndeterminate(true);
-        //ll.setVisibility(View.VISIBLE);
-        Log.d(TAG, "return View");
-        return view;
+        return inflater.inflate(R.layout.fragment_about, container, false);
     }
 
     @Override
@@ -104,35 +95,8 @@ public class AboutFragment extends Fragment implements
             supportMapFragment = SupportMapFragment.newInstance();
             fm.beginTransaction().replace(R.id.map, supportMapFragment).commit();
             supportMapFragment.getMapAsync(this);
+            googleMap = supportMapFragment.getMap();
         }
-    }
-
-    @Override
-    public void onResume()
-    {
-        Log.d(TAG, "super.onResume()");
-        super.onResume();
-
-        supportMapFragment.getMap().setMyLocationEnabled(locationEnable);
-
-        //initializeMap();
-
-        /*handler.post(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "run()   START");
-                initializeMapFragment();
-                isLocationEnable();
-                initializeMap();
-                Log.d(TAG, "run()   END");
-            }
-        });*/
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        supportMapFragment.getMap().setMyLocationEnabled(false);
     }
 
     @Override
@@ -140,11 +104,37 @@ public class AboutFragment extends Fragment implements
     {
         Log.d(TAG, "super.onStart()");
         super.onStart();
+    }
 
-        //initializeMapFragment();
-        //initializeMap();
-        //checkLocationEnable();
-        //initializeMap();
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        supportMapFragment.getMap().setMyLocationEnabled(locationEnable);
+        Log.d(TAG, "onResume()___locationEnable is...." + locationEnable);
+        Log.d(TAG, "onResume()___isMyLocationEnable()...." + supportMapFragment.getMap().isMyLocationEnabled());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        supportMapFragment.getMap().setMyLocationEnabled(false);
+        Log.d(TAG, "onPause()___locationEnable is...." + locationEnable);
+        Log.d(TAG, "onPause()___isMyLocationEnable()...." + supportMapFragment.getMap().isMyLocationEnabled());
+    }
+
+    @Override
+    public void onStop() {
+        Log.d(TAG, "super.onStop()");
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        locationEnable = false;
+        Log.d(TAG, "onDestroyView()___locationEnable is...." + locationEnable);
+        Log.d(TAG, "onDestroyView()___isMyLocationEnable()...." + supportMapFragment.getMap().isMyLocationEnabled());
     }
 
     @Override
@@ -159,6 +149,8 @@ public class AboutFragment extends Fragment implements
         googleMap.setOnMapLongClickListener(mapLongClickListener());
 
         googleMap.setMyLocationEnabled(locationEnable);
+        Log.d(TAG, "onMapReady()__locationEnable is...." + locationEnable);
+        Log.d(TAG, "onMapReady()___isMyLocationEnable()...." + supportMapFragment.getMap().isMyLocationEnabled());
     }
 
     private void initializeMapFragment()
@@ -211,8 +203,9 @@ public class AboutFragment extends Fragment implements
                     case LocationSettingsStatusCodes.SUCCESS:
                         // All location settings are satisfied. The client can initialize location
                         // requests here.
-                        locationEnable = true;
-                        supportMapFragment.getMap().setMyLocationEnabled(true);
+                        supportMapFragment.getMap().setMyLocationEnabled(locationEnable = true);
+                        Log.d(TAG, "Request_onResult_SUCCESS_()___locationEnable is...." + locationEnable);
+                        Log.d(TAG, "Request_onResult_SUCCESS_()___isMyLocationEnable()...." + supportMapFragment.getMap().isMyLocationEnabled());
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         // Location settings are not satisfied. But could be fixed by showing the user
@@ -228,8 +221,9 @@ public class AboutFragment extends Fragment implements
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
                         // Location settings are not satisfied. However, we have no way to fix the
                         // settings so we won't show the dialog.
-                        locationEnable = false;
-                        supportMapFragment.getMap().setMyLocationEnabled(false);
+                        supportMapFragment.getMap().setMyLocationEnabled(locationEnable = false);
+                        Log.d(TAG, "Request_onResult_SETTINGS_CHANGE_UNAVAILABLE_()___locationEnable is...." + locationEnable);
+                        Log.d(TAG, "Request_onResult_SETTINGS_CHANGE_UNAVAILABLE_()___isMyLocationEnable()...." + supportMapFragment.getMap().isMyLocationEnabled());
                         break;
                 }
             }
@@ -277,40 +271,48 @@ public class AboutFragment extends Fragment implements
         return new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-                supportMapFragment.getMap().moveCamera(CameraUpdateFactory.newLatLngZoom(POSITION, CAMERA_ZOOM));
+                supportMapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(POSITION, CAMERA_ZOOM));
             }
         };
     }
 
-    @Override
+    /*@Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         //final LocationSettingsStates states = LocationSettingsStates.fromIntent(intent);
         switch (requestCode) {
             case REQUEST_CHECK_SETTINGS:
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         // All required changes were successfully made
-                        locationEnable = true;
-                        supportMapFragment.getMap().setMyLocationEnabled(true);
+                        supportMapFragment.getMap().setMyLocationEnabled(locationEnable = true);
+                        Log.d(TAG, "onActivityResult_OK_()___locationEnable is...." + locationEnable);
+                        Log.d(TAG, "onActivityResult_OK_()___isMyLocationEnable()...." + supportMapFragment.getMap().isMyLocationEnabled());
                         break;
                     case Activity.RESULT_CANCELED:
                         // The user was asked to change settings, but chose not to
-                        locationEnable = false;
-                        supportMapFragment.getMap().setMyLocationEnabled(false);
+                        supportMapFragment.getMap().setMyLocationEnabled(locationEnable = false);
+                        Log.d(TAG, "onActivityResult_CANCELED_()___locationEnable is...." + locationEnable);
+                        Log.d(TAG, "onActivityResult_CANCELED_()___isMyLocationEnable()...." + supportMapFragment.getMap().isMyLocationEnabled());
                         break;
                     default:
+                        Log.d(TAG, "onActivityResult_DEFAULT!!!_()");
                         break;
                 }
                 break;
         }
+    }*/
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        /*Log.d(TAG, "onConnected(Bundle bundle)");
+        supportMapFragment.getMap().setMyLocationEnabled(locationEnable = true);
+        Log.d(TAG, "onConnected()___locationEnable is...." + locationEnable);
+        Log.d(TAG, "onConnected()___isMyLocationEnable()...." + supportMapFragment.getMap().isMyLocationEnabled());*/
     }
 
     @Override
-    public void onConnected(Bundle bundle) {}
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-    }
+    public void onConnectionFailed(ConnectionResult connectionResult) {}
 
     @Override
     public void onConnectionSuspended(int i) {}

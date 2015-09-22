@@ -1,5 +1,6 @@
 package su.shev4enkostr.easycode;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -374,6 +375,33 @@ public class MainActivity extends CustomAppCompatActivity implements NavigationV
         catch (PackageManager.NameNotFoundException e) {
             //Toast.makeText(this, "NOT Installed!!!", Toast.LENGTH_SHORT).show();
             return false;
+        }
+    }
+
+    // Need for AboutFragment location request
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //final LocationSettingsStates states = LocationSettingsStates.fromIntent(intent);
+        switch (requestCode) {
+            case AboutFragment.REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        // All required changes were successfully made
+                        AboutFragment.locationEnable = true;
+                        Log.d(TAG, "onActivityResult_OK_()___locationEnable is...." + AboutFragment.locationEnable);
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        // The user was asked to change settings, but chose not to
+                        AboutFragment.locationEnable = false;
+                        Log.d(TAG, "onActivityResult_CANCELED_()___locationEnable is...." + AboutFragment.locationEnable);
+                        break;
+                    default:
+                        Log.d(TAG, "onActivityResult_DEFAULT!!!_()");
+                        break;
+                }
+                break;
         }
     }
 }
