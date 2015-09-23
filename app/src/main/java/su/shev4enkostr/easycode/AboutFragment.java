@@ -11,10 +11,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -35,6 +40,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import org.w3c.dom.Document;
 import java.util.ArrayList;
 
+import su.shev4enkostr.easycode.libs.GoogleDirection;
+
 /**
  * Created by stas on 27.08.15.
  */
@@ -50,14 +57,17 @@ public class AboutFragment extends Fragment implements
     private SupportMapFragment supportMapFragment;
     private GoogleMap googleMap;
     private LatLng myLocation;
+    private GoogleDirection googleDirection;
+    private Document document;
     private final static LatLng POSITION = new LatLng(50.01655314, 36.22770569);
     private final static int CAMERA_ZOOM = 17;
 
-    private ProgressBar pb;
-    private LinearLayout ll;
+    private MenuItem buttonRoute;
+    private MenuItem buttonAnimate;
+    //private ProgressBar pb;
+    //private LinearLayout ll;
     private Handler handler;
 
-    private final static int LOADER_ID = 1;
     private final static String TAG = "Load_map_______________";
 
     @Override
@@ -87,6 +97,7 @@ public class AboutFragment extends Fragment implements
         Log.d(TAG, "super.onActivityCreated()");
         super.onActivityCreated(savedInstanceState);
 
+        setHasOptionsMenu(true);
         checkLocationEnable();
 
         FragmentManager fm = getChildFragmentManager();
@@ -119,6 +130,7 @@ public class AboutFragment extends Fragment implements
     public void onPause() {
         super.onPause();
         supportMapFragment.getMap().setMyLocationEnabled(false);
+        googleDirection.cancelAnimated();
         Log.d(TAG, "onPause()___locationEnable is...." + locationEnable);
         Log.d(TAG, "onPause()___isMyLocationEnable()...." + supportMapFragment.getMap().isMyLocationEnabled());
     }
@@ -153,6 +165,43 @@ public class AboutFragment extends Fragment implements
         Log.d(TAG, "onMapReady()___isMyLocationEnable()...." + supportMapFragment.getMap().isMyLocationEnabled());
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_about_fragment, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+        buttonRoute = menu.findItem(R.id.action_request_route);
+        buttonAnimate = menu.findItem(R.id.action_animate_route);
+    }
+
+    /*@Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if (supportMapFragment.getMap().isMyLocationEnabled())
+            menu.getItem(R.id.action_request_route).setVisible(true);
+        else
+            menu.getItem(R.id.action_request_route).setVisible(false);
+
+        super.onPrepareOptionsMenu(menu);
+    }*/
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_request_route:
+                if (myLocation != null)
+                    createRoute();
+                else
+                    Toast.makeText(getContext(), R.string.toast_location_not_available, Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.action_animate_route:
+                animateRoute();
+                break;
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     private void initializeMapFragment()
     {
         Log.d(TAG, "initializeMapFragment");
@@ -183,8 +232,6 @@ public class AboutFragment extends Fragment implements
         googleMap.setOnMyLocationButtonClickListener(myLocationButtonClickListener());
 
         Log.d(TAG, "initializeMap()  STOP");
-        pb.setVisibility(View.GONE);
-        ll.setVisibility(View.VISIBLE);
         Log.d(TAG, "pb.setVisibility(View.GONE)");
     }
 
@@ -231,17 +278,17 @@ public class AboutFragment extends Fragment implements
     }
 
     private void createRoute() {
-        GMapV2Direction md = new GMapV2Direction();
+        buttonRoute.setVisible(false);
+        googleDirection = new GoogleDirection(getContext());
+        googleDirection.setOnDirectionResponseListener(onDirectionResponseListener());
+        googleDirection.setOnAnimateListener(onAnimateListener());
+        googleDirection.setLogging(true);
+        googleDirection.request(myLocation, POSITION, GoogleDirection.MODE_DRIVING);
+    }
 
-        Document doc = md.getDocument(POSITION, myLocation, GMapV2Direction.MODE_DRIVING);
-        ArrayList<LatLng> directionPoint = md.getDirection(doc);
-        PolylineOptions rectLine = new PolylineOptions().width(3).color(Color.RED);
-
-        for(int i = 0 ; i < directionPoint.size() ; i++) {
-            rectLine.add(directionPoint.get(i));
-        }
-
-        googleMap.addPolyline(rectLine);
+    private void animateRoute() {
+        googleDirection.animateDirection(supportMapFragment.getMap(), googleDirection.getDirection(document),
+                GoogleDirection.SPEED_VERY_FAST, true, false, true, false, null, false, true, null);
     }
 
     private GoogleMap.OnMyLocationChangeListener myLocationChangeListener() {
@@ -250,6 +297,9 @@ public class AboutFragment extends Fragment implements
             public void onMyLocationChange(Location location) {
                 myLocation = new LatLng(location.getLatitude(), location.getLongitude());
                 supportMapFragment.getMap().getUiSettings().setMyLocationButtonEnabled(true);
+
+                if (googleDirection == null)
+                    buttonRoute.setVisible(true);
 
                 /*googleMap.addMarker(new MarkerOptions().position(myLocation)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));*/
@@ -261,7 +311,12 @@ public class AboutFragment extends Fragment implements
         return new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
-                supportMapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, CAMERA_ZOOM));
+                try {
+                    supportMapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, CAMERA_ZOOM));
+                }
+                catch (NullPointerException e) {
+                    Toast.makeText(getContext(), R.string.toast_location_not_available, Toast.LENGTH_SHORT).show();
+                }
                 return false;
             }
         };
@@ -272,6 +327,34 @@ public class AboutFragment extends Fragment implements
             @Override
             public void onMapLongClick(LatLng latLng) {
                 supportMapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(POSITION, CAMERA_ZOOM));
+            }
+        };
+    }
+
+    private GoogleDirection.OnDirectionResponseListener onDirectionResponseListener() {
+        return new GoogleDirection.OnDirectionResponseListener() {
+            @Override
+            public void onResponse(String status, Document doc, GoogleDirection gd) {
+                document = doc;
+                supportMapFragment.getMap().addPolyline(gd.getPolyline(doc, 3, Color.RED));
+                buttonAnimate.setVisible(true);
+            }
+        };
+    }
+
+    private GoogleDirection.OnAnimateListener onAnimateListener() {
+        return new GoogleDirection.OnAnimateListener() {
+            @Override
+            public void onStart() {
+                buttonAnimate.setVisible(false);
+            }
+
+            @Override
+            public void onProgress(int progress, int total) {}
+
+            @Override
+            public void onFinish() {
+                buttonAnimate.setVisible(true);
             }
         };
     }

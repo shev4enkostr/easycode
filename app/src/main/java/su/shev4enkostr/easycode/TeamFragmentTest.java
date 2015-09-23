@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 
+import su.shev4enkostr.easycode.libs.CustomVolleyRequestQueue;
+
 /**
  * Created by stas on 23.08.15.
  */

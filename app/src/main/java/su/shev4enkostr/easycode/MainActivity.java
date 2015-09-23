@@ -21,7 +21,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-public class MainActivity extends CustomAppCompatActivity implements NavigationView.OnNavigationItemSelectedListener
+public class MainActivity extends CustomAppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener
 {
     private AppBarLayout appBarLayout;
     private Toolbar toolbar;
@@ -83,6 +84,7 @@ public class MainActivity extends CustomAppCompatActivity implements NavigationV
             //prepareFragment(checkedDrawerItemId);
 
             title = savedInstanceState.getString(ARG_TOOLBAR_TITLE);
+            getSupportActionBar().setTitle(title);
             addFragment();
         }
 
@@ -94,30 +96,26 @@ public class MainActivity extends CustomAppCompatActivity implements NavigationV
         super.onStart();
         //getSupportActionBar().setTitle(title);
         Log.d(TAG, "onStart()______________________");
-        appBarLayout.setExpanded(true);
-        getSupportActionBar().setTitle(title);
+        //appBarLayout.setExpanded(true);
+        //getSupportActionBar().setTitle(title);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume()______________________");
-        Log.d(TAG, "appBarLayout..getTargetElevation()__________" + appBarLayout.getTargetElevation());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause()______________________");
-        Log.d(TAG, "appBarLayout..getTargetElevation()__________" + appBarLayout.getTargetElevation());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         Log.d(TAG, "onStop()______________________");
-
-        appBarLayout.setExpanded(true);
     }
 
     @Override
@@ -137,9 +135,6 @@ public class MainActivity extends CustomAppCompatActivity implements NavigationV
         super.onSaveInstanceState(outState);
         outState.putInt(ARG_CHECKED_DRAWER_ITEM, checkedDrawerItemId);
         outState.putString(ARG_TOOLBAR_TITLE, title);
-
-        /*AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
-        appBarLayout.setExpanded(true);*/
 
         Log.d(TAG, "onSaveInstanceState()__________________");
     }
@@ -198,9 +193,8 @@ public class MainActivity extends CustomAppCompatActivity implements NavigationV
             default:
                 break;
         }
-        //getSupportActionBar().setTitle(title);
+        getSupportActionBar().setTitle(title);
         Log.d(TAG, "prepareFragment()__________________");
-        Log.d(TAG, fragment.toString());
     }
 
     @Override
@@ -266,6 +260,7 @@ public class MainActivity extends CustomAppCompatActivity implements NavigationV
                     handler.post(runnable);
                     runnable = null;
                 }*/
+
                 addFragment();
             }
 
@@ -361,6 +356,7 @@ public class MainActivity extends CustomAppCompatActivity implements NavigationV
         if (id == R.id.action_settings) {
             return true;
         }*/
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -383,25 +379,22 @@ public class MainActivity extends CustomAppCompatActivity implements NavigationV
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        //final LocationSettingsStates states = LocationSettingsStates.fromIntent(intent);
-        switch (requestCode) {
-            case AboutFragment.REQUEST_CHECK_SETTINGS:
-                switch (resultCode) {
-                    case Activity.RESULT_OK:
-                        // All required changes were successfully made
-                        AboutFragment.locationEnable = true;
-                        Log.d(TAG, "onActivityResult_OK_()___locationEnable is...." + AboutFragment.locationEnable);
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        // The user was asked to change settings, but chose not to
-                        AboutFragment.locationEnable = false;
-                        Log.d(TAG, "onActivityResult_CANCELED_()___locationEnable is...." + AboutFragment.locationEnable);
-                        break;
-                    default:
-                        Log.d(TAG, "onActivityResult_DEFAULT!!!_()");
-                        break;
-                }
-                break;
+        if (requestCode == AboutFragment.REQUEST_CHECK_SETTINGS) {
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    // All required changes were successfully made
+                    AboutFragment.locationEnable = true;
+                    Log.d(TAG, "onActivityResult_OK_()___locationEnable is...." + AboutFragment.locationEnable);
+                    break;
+                case Activity.RESULT_CANCELED:
+                    // The user was asked to change settings, but chose not to
+                    AboutFragment.locationEnable = false;
+                    Log.d(TAG, "onActivityResult_CANCELED_()___locationEnable is...." + AboutFragment.locationEnable);
+                    break;
+                default:
+                    Log.d(TAG, "onActivityResult_DEFAULT!!!_()");
+                    break;
+            }
         }
     }
 }

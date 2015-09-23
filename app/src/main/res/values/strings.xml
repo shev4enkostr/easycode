@@ -16,7 +16,8 @@
     <string name="action_social_vk">Vkontakte</string>
     <string name="action_social_fb">Facebook</string>
     <string name="action_social_gplus">Google Plus</string>
-    <string name="action_social_inst">Instagram</string>
+    <string name="action_request_route">Get route</string>
+    <string name="action_animate_route">Animate route</string>
 
     <!-- Courses names -->
     <string name="course_java">Course foundations of JAVA</string>
@@ -56,6 +57,7 @@
     <string name="toast_exit">Press back again to exit!</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_course_about">CourseAboutActivity</string>
+    <string name="toast_location_not_available">Cannot get your location. Please, try again later!</string>
 
     <!-- URL's -->
 

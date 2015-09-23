@@ -1,4 +1,4 @@
-package su.shev4enkostr.easycode;
+package su.shev4enkostr.easycode.libs;
 
 import android.graphics.Bitmap;
 import android.util.LruCache;
